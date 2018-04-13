@@ -79,8 +79,6 @@ int main()
         printf("\t%d", avl[i]);
     }
     printf("\n");
-
-    //Main procedure goes below to check for unsafe state.
     while (count != 0) {
         safe = 0;
         for (i = 0; i < p; i++) {
