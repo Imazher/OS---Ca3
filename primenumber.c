@@ -61,3 +61,55 @@ primes_computer_runner (void *param)
 	azher[i * prime].f[1] = prime;
 
       }
+	 
+  for (i = 2; i < thread_parameters->max_search; ++i)
+    if (!azher[i].f[0])
+      printf ("* %ld is prime.\n", i);
+#ifdef SHOW_NONPRIME
+    else
+      {
+	printf ("  %ld is nonprime, factorization: (", i);
+	print_factorization (i, azher);
+	puts (")");
+      }
+#endif
+
+  free (azher);
+
+  return NULL;
+}
+
+int
+main (int argc, char *argv[])
+{
+  
+  thread_parameters_t thread_parameters;
+ 
+  pthread_cond_init (&thread_parameters.start_working, NULL);
+  pthread_mutex_init (&thread_parameters.cond_mutex, NULL);
+
+  
+  pthread_t computational_thread;
+
+  
+  pthread_create (&computational_thread, NULL, primes_computer_runner,
+		  (void *) &thread_parameters);
+
+  puts (
+	"Enter an integer and the program will print all primes less than\n"
+	"the integer you enter. (^D or ^C to quit.)\n"
+#ifdef SHOW_NONPRIME
+	
+#endif
+    );
+
+  
+  if (!scanf ("%ld", &thread_parameters.max_search))
+    return 0;
+  
+  pthread_cond_broadcast (&thread_parameters.start_working);
+  
+  pthread_join (computational_thread, NULL);
+
+  return 0;
+}
